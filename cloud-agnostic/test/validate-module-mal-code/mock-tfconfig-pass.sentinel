@@ -1,0 +1,235 @@
+import "strings"
+
+providers = {
+	"aws": {
+		"alias": "",
+		"config": {
+			"region": {
+				"constant_value": "us-east-1",
+			},
+		},
+		"module_address":      "",
+		"name":                "aws",
+		"provider_config_key": "aws",
+		"version_constraint":  "",
+	},
+	"module.s3-webapp:aws": {
+		"alias": "",
+		"config": {
+			"region": {
+				"references": [
+					"var.region",
+				],
+			},
+		},
+		"module_address":      "module.s3-webapp",
+		"name":                "aws",
+		"provider_config_key": "module.s3-webapp:aws",
+		"version_constraint":  "",
+	},
+	"random": {
+		"alias":               "",
+		"config":              {},
+		"module_address":      "",
+		"name":                "random",
+		"provider_config_key": "random",
+		"version_constraint":  "3.1.0",
+	},
+}
+
+resources = {
+	"module.s3-webapp.aws_s3_bucket.bucket": {
+		"address": "module.s3-webapp.aws_s3_bucket.bucket",
+		"config": {
+			"acl": {
+				"constant_value": "public-read",
+			},
+			"bucket": {
+				"references": [
+					"var.prefix",
+					"var.name",
+				],
+			},
+			"force_destroy": {
+				"constant_value": true,
+			},
+			"policy": {
+				"references": [
+					"var.prefix",
+					"var.name",
+				],
+			},
+			"website": [
+				{
+					"error_document": {
+						"constant_value": "error.html",
+					},
+					"index_document": {
+						"constant_value": "index.html",
+					},
+				},
+			],
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "module.s3-webapp",
+		"name":                "bucket",
+		"provider_config_key": "module.s3-webapp:aws",
+		"provisioners":        [],
+		"type":                "aws_s3_bucket",
+	},
+	"module.s3-webapp.aws_s3_bucket_object.webapp": {
+		"address": "module.s3-webapp.aws_s3_bucket_object.webapp",
+		"config": {
+			"acl": {
+				"constant_value": "public-read",
+			},
+			"bucket": {
+				"references": [
+					"aws_s3_bucket.bucket.id",
+					"aws_s3_bucket.bucket",
+				],
+			},
+			"content": {
+				"references": [
+					"path.module",
+				],
+			},
+			"content_type": {
+				"constant_value": "text/html",
+			},
+			"key": {
+				"constant_value": "index.html",
+			},
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "module.s3-webapp",
+		"name":                "webapp",
+		"provider_config_key": "module.s3-webapp:aws",
+		"provisioners":        [],
+		"type":                "aws_s3_bucket_object",
+	},
+	"random_pet.pet_name": {
+		"address": "random_pet.pet_name",
+		"config": {
+			"length": {
+				"constant_value": 2,
+			},
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "",
+		"name":                "pet_name",
+		"provider_config_key": "random",
+		"provisioners":        [],
+		"type":                "random_pet",
+	},
+}
+
+provisioners = {}
+
+variables = {
+	"mal_code": {
+		"default":        "app1",
+		"description":    "",
+		"module_address": "",
+		"name":           "mal_code",
+	},
+	"module.s3-webapp:mal_code": {
+		"default":        null,
+		"description":    "",
+		"module_address": "module.s3-webapp",
+		"name":           "mal_code",
+	},
+	"module.s3-webapp:name": {
+		"default":        "nwong",
+		"description":    "",
+		"module_address": "module.s3-webapp",
+		"name":           "name",
+	},
+	"module.s3-webapp:prefix": {
+		"default":        "dev",
+		"description":    "",
+		"module_address": "module.s3-webapp",
+		"name":           "prefix",
+	},
+	"module.s3-webapp:region": {
+		"default":        "us-east-1",
+		"description":    "",
+		"module_address": "module.s3-webapp",
+		"name":           "region",
+	},
+}
+
+outputs = {
+	"module.s3-webapp:endpoint": {
+		"depends_on":     [],
+		"description":    "",
+		"module_address": "module.s3-webapp",
+		"name":           "endpoint",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"aws_s3_bucket.bucket.website_endpoint",
+				"aws_s3_bucket.bucket",
+			],
+		},
+	},
+	"website_endpoint": {
+		"depends_on":     [],
+		"description":    "",
+		"module_address": "",
+		"name":           "website_endpoint",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"module.s3-webapp.endpoint",
+				"module.s3-webapp",
+			],
+		},
+	},
+}
+
+module_calls = {
+	"s3-webapp": {
+		"config": {
+			"mal_code": {
+				"references": [
+					"var.mal_code",
+				],
+			},
+			"name": {
+				"constant_value": "nwong",
+			},
+			"prefix": {
+				"constant_value": "dev",
+			},
+			"region": {
+				"constant_value": "us-east-1",
+			},
+		},
+		"count":              {},
+		"depends_on":         [],
+		"for_each":           {},
+		"module_address":     "",
+		"name":               "s3-webapp",
+		"source":             "app.terraform.io/nw-tfc-learn/s3-webapp/aws",
+		"version_constraint": "1.0.2",
+	},
+}
+
+strip_index = func(addr) {
+	s = strings.split(addr, ".")
+	for s as i, v {
+		s[i] = strings.split(v, "[")[0]
+	}
+
+	return strings.join(s, ".")
+}

@@ -1,0 +1,54 @@
+# This policy uses the tfconfig/v2 and tfplan/v2 import to check that the MAL code input variable
+# to a module is a substring of the workspace name
+
+import "tfconfig-functions" as config
+import "tfplan/v2" as plan
+import "tfrun" as run
+import "strings"
+
+
+# Get all modules
+allModuleCalls = config.find_all_module_calls()
+
+workspaceName = run.workspace.name
+
+# Gets the mal_code input value from a module call
+# returns null if the module does not have a mal_code input
+get_mal_code_value = func(address, mc) {
+  if "mal_code" in mc.config {
+    mal_code_attr = mc.config.mal_code
+    if "constant_value" in mal_code_attr {
+      # Found constant_value for mal_code input
+      return mal_code_attr.constant_value
+    } else if "references" in mal_code_attr {
+      # Found references for mal_code input
+      # Get the first reference since we expect only a single variable reference
+      attributes = strings.split(mal_code_attr.references[0], ".")
+      if attributes[0] is "var" {
+        # Fetch variable value from tfplan
+        return plan.variables[attributes[1]].value
+      } else {
+        # Unable to resolve non variable references
+        return null
+      }
+    }
+  } else {
+    print("Module", address, "does not have an input variable called mal_code")
+    return null
+  }
+}
+
+wsNameMismatch = filter allModuleCalls as address, mc {
+    workspaceName not contains get_mal_code_value(address, mc)
+}
+
+# Print any violations
+for wsNameMismatch as address, mc {
+    mal_code = get_mal_code_value(address, mc)
+    print("Module", address, "mal_code", mal_code, "is not a substring of the workspace name", workspaceName)
+}
+
+# Main rule
+main = rule {
+    length(wsNameMismatch) is 0
+}
