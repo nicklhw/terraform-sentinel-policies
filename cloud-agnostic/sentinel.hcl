@@ -14,8 +14,13 @@ module "tfrun-functions" {
     source = "../common-functions/tfrun-functions/tfrun-functions.sentinel"
 }
 
-policy "validate-module-mal-code" {
-    source = "./validate-module-mal-code.sentinel"
+#policy "validate-module-mal-code" {
+#    source = "./validate-module-mal-code.sentinel"
+#    enforcement_level = "soft-mandatory"
+#}
+
+policy "validate-module-malcode-http" {
+    source = "./validate-module-malcode-http.sentinel"
     enforcement_level = "soft-mandatory"
 }
 

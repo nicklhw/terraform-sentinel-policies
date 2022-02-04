@@ -1,0 +1,52 @@
+id = "run-phpUQufZhrX2MADT"
+created_at = "2022-01-26T22:37:03.778Z"
+message = "Triggered via CLI"
+commit_sha = undefined
+speculative = true
+is_destroy = false
+refresh = true
+refresh_only = false
+replace_addrs = null
+target_addrs = null
+
+variables = {
+	"AWS_ACCESS_KEY_ID": {
+		"category":  "env",
+		"sensitive": false,
+	},
+	"AWS_SECRET_ACCESS_KEY": {
+		"category":  "env",
+		"sensitive": true,
+	},
+	"AWS_SESSION_EXPIRATION": {
+		"category":  "env",
+		"sensitive": false,
+	},
+	"AWS_SESSION_TOKEN": {
+		"category":  "env",
+		"sensitive": true,
+	},
+}
+
+organization = {
+	"name": "nw-tfc-learn",
+}
+
+workspace = {
+	"auto_apply":  false,
+	"created_at":  "2022-01-23T21:29:07.123Z",
+	"description": "",
+	"id":          "ws-H22rYN8YWNXBukVC",
+	"name":        "sentinel-td-demo-app1",
+	"tags": [
+		"td-demo",
+	],
+	"vcs_repo":          null,
+	"working_directory": "",
+}
+
+cost_estimate = {
+	"delta_monthly_cost":    "0.0",
+	"prior_monthly_cost":    "0.0",
+	"proposed_monthly_cost": "0.0",
+}
