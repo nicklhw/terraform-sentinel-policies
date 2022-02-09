@@ -32,6 +32,12 @@ mock "tfrun" {
   }
 }
 
+mock "http" {
+  module {
+    source = "mock-http.sentinel"
+  }
+}
+
 test {
   rules = {
     main = false
