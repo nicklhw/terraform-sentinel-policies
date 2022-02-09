@@ -3,7 +3,7 @@ param "address" {
 }
 
 param "token" {
-  value = "mKdF9sDkWN6reQ.atlasv1.YilV6kQ5yfA404Woy9XSxynTVbNgFi4Vz1UnNF9SjUyGzlT7LtreMbC0Wa6cb9OajwY"
+  value = ""
 }
 
 module "tfconfig-functions" {
